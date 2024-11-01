@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>N. Richards Group - ISP & Website Tracker</title>
+    <style>
+        /* Modern CSS styling */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: #1a5f7a;
+            color: white;
+            padding: 20px;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 20px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .tab.active {
+            background: #1a5f7a;
+            color: white;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #1a5f7a;
+            color: white;
+            position: sticky;
+            top: 0;
+        }
+
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        tr:hover {
+            background: #f0f7fa;
+        }
+
+        .isp-tag {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .zol { background: #e8f5e9; color: #2e7d32; }
+        .telone { background: #e3f2fd; color: #1565c0; }
+        .broadsat { background: #fff3e0; color: #ef6c00; }
+        .dandemutande { background: #f3e5f5; color: #7b1fa2; }
+
+        @media (max-width: 768px) {
+            .table-container {
+                margin: 0 -20px;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>N. Richards Group</h1>
+            <p>ISP & Website Installation Tracker</p>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="tab active" onclick="showTable('isp')">ISP Installations</button>
+            <button class="tab" onclick="showTable('website')">Website Management</button>
+        </div>
+
+        <div class="table-container" id="isp-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Branch</th>
+                        <th>ISP</th>
+                        <th>Service ID</th>
+                        <th>Package</th>
+                        <th>Bandwidth</th>
+                        <th>Monthly Cost</th>
+                        <th>Installation Date</th>
+                        <th>Status</th>
+                        <th>Contact</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Add your ISP data rows here -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="table-container" id="website-table" style="display: none;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Website</th>
+                        <th>Domain Provider</th>
+                        <th>Hosting</th>
+                        <th>Expiry Date</th>
+                        <th>SSL Status</th>
+                        <th>Admin Contact</th>
+                        <th>Last Update</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Add your website data rows here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function showTable(tableType) {
+            document.getElementById('isp-table').style.display = 
+                tableType === 'isp' ? 'block' : 'none';
+            document.getElementById('website-table').style.display = 
+                tableType === 'website' ? 'block' : 'none';
+            
+            // Update active tab
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
