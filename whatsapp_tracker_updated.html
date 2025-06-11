@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company WhatsApp Groups Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 32px 64px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%);
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 113, 208, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 113, 208, 0.2) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(2deg); }
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .brand-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+        
+        .brand-subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #cbd5e1;
+        }
+        
+        .brand-description {
+            font-size: 1rem;
+            opacity: 0.7;
+            font-weight: 400;
+            color: #94a3b8;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+        
+        .controls {
+            padding: 50px 40px;
+            background: rgba(248, 250, 252, 0.6);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+        }
+        
+        .form-group {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            align-items: end;
+        }
+        
+        .form-field {
+            flex: 1;
+            min-width: 220px;
+        }
+        
+        .form-field label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #374151;
+            font-size: 14px;
+            letter-spacing: 0.025em;
+        }
+        
+        .form-field input, .form-field select {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            font-size: 15px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        
+        .form-field input:focus, .form-field select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.95);
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+        
+        .btn {
+            padding: 16px 32px;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: 0.025em;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: 2px solid transparent;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 24px rgba(102, 126, 234, 0.3);
+            background: linear-gradient(135deg, #5a67d8, #6b46c1);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #64748b, #475569);
+            color: white;
+            border: 2px solid transparent;
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 24px rgba(100, 116, 139, 0.3);
+        }
+        
+        .btn-import {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: 2px solid transparent;
+        }
+        
+        .btn-import:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 24px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-print {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            border: 2px solid transparent;
+        }
+        
+        .btn-print:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 24px rgba(245, 158, 11, 0.3);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            padding: 10px 16px;
+            font-size: 12px;
+            border-radius: 12px;
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(239, 68, 68, 0.3);
+        }
+        
+        .filters {
+            display: flex;
+            gap: 24px;
+            margin-top: 32px;
+            flex-wrap: wrap;
+            align-items: end;
+        }
+        
+        .notification {
+            padding: 16px 24px;
+            margin: 16px 0;
+            border-radius: 16px;
+            font-weight: 500;
+            animation: slideIn 0.3s ease-out;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(10px);
+        }
+        
+        .notification.error {
+            background: rgba(254, 226, 226, 0.95);
+            color: #dc2626;
+            border: 1px solid rgba(248, 113, 113, 0.3);
+        }
+        
+        .notification.success {
+            background: rgba(220, 252, 231, 0.95);
+            color: #059669;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .summary {
+            padding: 50px 40px;
+            background: linear-gradient(135deg, rgba(248, 250, 252, 0.9), rgba(241, 245, 249, 0.9));
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+        }
+        
+        .summary h2 {
+            margin-bottom: 32px;
+            color: #1f2937;
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+        }
+        
+        .summary-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+        
+        .summary-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 32px 64px rgba(102, 126, 234, 0.15);
+        }
+        
+        .summary-card h3 {
+            color: #374151;
+            margin-bottom: 16px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .summary-card .number {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .table-container {
+            padding: 50px 40px;
+            overflow-x: auto;
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .table th {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            color: white;
+            padding: 24px 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            letter-spacing: 0.05em;
+            position: relative;
+        }
+        
+        .table td {
+            padding: 24px 20px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+            vertical-align: top;
+            transition: all 0.3s ease;
+        }
+        
+        .table tbody tr {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .table tbody tr:hover {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(248, 250, 252, 0.8));
+            transform: scale(1.01);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+        }
+        
+        .department-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.025em;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dept-hr { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+        .dept-it { background: linear-gradient(135deg, #1e293b, #334155); color: white; }
+        .dept-finance { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+        .dept-marketing { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+        .dept-sales { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
+        .dept-operations { background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; }
+        .dept-executive { background: linear-gradient(135deg, #1f2937, #111827); color: white; }
+        .dept-legal { background: linear-gradient(135deg, #374151, #1f2937); color: white; }
+        .dept-procurement { background: linear-gradient(135deg, #06b6d4, #0891b2); color: white; }
+        .dept-customer { background: linear-gradient(135deg, #ec4899, #db2777); color: white; }
+        .dept-research { background: linear-gradient(135deg, #84cc16, #65a30d); color: white; }
+        .dept-quality { background: linear-gradient(135deg, #f97316, #ea580c); color: white; }
+        .dept-logistics { background: linear-gradient(135deg, #64748b, #475569); color: white; }
+        .dept-training { background: linear-gradient(135deg, #14b8a6, #0d9488); color: white; }
+        .dept-other { background: linear-gradient(135deg, #6b7280, #4b5563); color: white; }
+        
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: #6b7280;
+        }
+        
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+            color: #374151;
+        }
+
+        /* Print Styles */
+        @media print {
+            * {
+                -webkit-print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+            
+            body {
+                background: white !important;
+                padding: 0 !important;
+                font-size: 12px !important;
+            }
+            
+            .container {
+                max-width: none !important;
+                margin: 0 !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                background: white !important;
+            }
+            
+            .header {
+                background: #1e293b !important;
+                color: white !important;
+                padding: 30px 20px !important;
+                page-break-inside: avoid;
+            }
+            
+            .brand-title {
+                font-size: 2rem !important;
+            }
+            
+            .brand-subtitle {
+                font-size: 1rem !important;
+            }
+            
+            .brand-description {
+                font-size: 0.9rem !important;
+            }
+            
+            .controls {
+                display: none !important;
+            }
+            
+            .summary {
+                background: #f8fafc !important;
+                page-break-inside: avoid;
+                padding: 30px 20px !important;
+            }
+            
+            .summary h2 {
+                font-size: 1.5rem !important;
+            }
+            
+            .summary-card {
+                background: white !important;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+                padding: 20px !important;
+                border: 1px solid #e2e8f0 !important;
+            }
+            
+            .summary-card .number {
+                font-size: 2rem !important;
+                color: #667eea !important;
+            }
+            
+            .table-container {
+                padding: 30px 20px !important;
+            }
+            
+            .table {
+                box-shadow: none !important;
+                border: 1px solid #e2e8f0 !important;
+            }
+            
+            .table th {
+                background: #1e293b !important;
+                color: white !important;
+                padding: 12px 8px !important;
+                font-size: 11px !important;
+            }
+            
+            .table td {
+                padding: 12px 8px !important;
+                border-bottom: 1px solid #e2e8f0 !important;
+                font-size: 11px !important;
+            }
+            
+            .table tbody tr:hover {
+                background: transparent !important;
+                transform: none !important;
+                box-shadow: none !important;
+            }
+            
+            .department-badge {
+                background: #667eea !important;
+                color: white !important;
+                padding: 4px 8px !important;
+                font-size: 10px !important;
+                border-radius: 4px !important;
+            }
+            
+            .btn-danger {
+                display: none !important;
+            }
+            
+            .print-date {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                font-size: 10px;
+                color: #666;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .brand-title {
+                font-size: 2.5rem;
+            }
+            
+            .header {
+                padding: 40px 20px;
+            }
+            
+            .form-group {
+                flex-direction: column;
+            }
+            
+            .form-field {
+                min-width: 100%;
+            }
+            
+            .filters {
+                flex-direction: column;
+            }
+            
+            .table-container, .controls, .summary {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <h1 class="brand-title">WhatsApp Groups Manager</h1>
+                <p class="brand-subtitle">N Richards Group</p>
+                <p class="brand-description">Professional management system for company WhatsApp groups and team communication</p>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div id="notifications"></div>
+            
+            <div class="form-group">
+                <div class="form-field">
+                    <label for="groupName">Group Name</label>
+                    <input type="text" id="groupName" placeholder="e.g., HR Team Chat">
+                </div>
+                <div class="form-field">
+                    <label for="department">Department</label>
+                    <input type="text" id="department" placeholder="e.g., Human Resources">
+                </div>
+                <div class="form-field">
+                    <label for="purpose">Purpose</label>
+                    <input type="text" id="purpose" placeholder="e.g., Daily coordination">
+                </div>
+                <div class="form-field">
+                    <label for="admin">Group Admin</label>
+                    <input type="text" id="admin" placeholder="e.g., John Doe">
+                </div>
+                <div class="form-field">
+                    <button class="btn btn-primary" onclick="addGroup()">Add Group</button>
+                </div>
+            </div>
+            
+            <div class="filters">
+                <div class="form-field">
+                    <label for="filterDepartment">Filter by Department</label>
+                    <select id="filterDepartment" onchange="filterGroups()">
+                        <option value="">All Departments</option>
+                    </select>
+                </div>
+                <div class="form-field">
+                    <button class="btn btn-secondary" onclick="exportData()">Export CSV</button>
+                </div>
+                <div class="form-field">
+                    <div class="file-input-wrapper">
+                        <input type="file" id="csvFile" accept=".csv" onchange="importCSV()">
+                        <button class="btn btn-import" onclick="document.getElementById('csvFile').click()">Import CSV</button>
+                    </div>
+                </div>
+                <div class="form-field">
+                    <button class="btn btn-print" onclick="printReport()">Print PDF</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="summary">
+            <h2>📊 Summary Dashboard</h2>
+            <div class="summary-grid" id="summaryGrid">
+                <div class="summary-card">
+                    <h3>Total Groups (Filtered)</h3>
+                    <div class="number" id="totalGroups">0</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Total Departments</h3>
+                    <div class="number" id="totalDepartments">0</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Group Name</th>
+                        <th>Department</th>
+                        <th>Purpose</th>
+                        <th>Admin</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="groupsTable">
+                    <tr>
+                        <td colspan="5" class="empty-state">
+                            <div>
+                                <h3>No groups added yet</h3>
+                                <p>Start by adding your first WhatsApp group above or import from CSV</p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="print-date" style="display: none;">
+        Generated on: <span id="printDate"></span>
+    </div>
+
+    <script>
+        let groups = [];
+        let nextId = 1;
+        let currentFilter = '';
+        
+        function showNotification(message, type = 'error') {
+            const container = document.getElementById('notifications');
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            container.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+        
+        function isDuplicateGroup(name, department) {
+            return groups.some(group => 
+                group.name.toLowerCase().trim() === name.toLowerCase().trim() &&
+                group.department.toLowerCase().trim() === department.toLowerCase().trim()
+            );
+        }
+        
+        function addGroup() {
+            const name = document.getElementById('groupName').value.trim();
+            const department = document.getElementById('department').value.trim();
+            const purpose = document.getElementById('purpose').value.trim();
+            const admin = document.getElementById('admin').value.trim();
+            
+            if (!name || !department || !purpose || !admin) {
+                showNotification('Please fill in all fields', 'error');
+                return;
+            }
+            
+            if (isDuplicateGroup(name, department)) {
+                showNotification(`Duplicate group detected! "${name}" already exists in ${department} department.`, 'error');
+                return;
+            }
+            
+            const group = {
+                id: nextId++,
+                name,
+                department,
+                purpose,
+                admin
+            };
+            
+            groups.push(group);
+            
+            // Clear form
+            document.getElementById('groupName').value = '';
+            document.getElementById('department').value = '';
+            document.getElementById('purpose').value = '';
+            document.getElementById('admin').value = '';
+            
+            showNotification(`Group "${name}" added successfully!`, 'success');
+            
+            renderGroups();
+            updateSummary();
+            updateDepartmentFilter();
+        }
+        
+        function deleteGroup(id) {
+            const group = groups.find(g => g.id === id);
+            if (confirm(`Are you sure you want to delete "${group.name}"?`)) {
+                groups = groups.filter(group => group.id !== id);
+                showNotification(`Group "${group.name}" deleted successfully!`, 'success');
+                renderGroups();
+                updateSummary();
+                updateDepartmentFilter();
+            }
+        }
+        
+        function updateDepartmentFilter() {
+            const filterSelect = document.getElementById('filterDepartment');
+            const currentValue = filterSelect.value;
+            
+            // Get unique departments from existing groups
+            const departments = [...new Set(groups.map(g => g.department))].sort();
+            
+            // Clear existing options except "All Departments"
+            filterSelect.innerHTML = '<option value="">All Departments</option>';
+            
+            // Add department options
+            departments.forEach(dept => {
+                const option = document.createElement('option');
+                option.value = dept;
+                option.textContent = dept;
+                filterSelect.appendChild(option);
+            });
+            
+            // Restore previous selection if it still exists
+            if (currentValue && departments.includes(currentValue)) {
+                filterSelect.value = currentValue;
+            }
+        }
+        
+        function getFilteredGroups() {
+            const departmentFilter = document.getElementById('filterDepartment').value;
+            currentFilter = departmentFilter;
+            
+            if (!departmentFilter) {
+                return groups;
+            }
+            
+            return groups.filter(group => group.department === departmentFilter);
+        }
+        
+        function renderGroups() {
+            const tbody = document.getElementById('groupsTable');
+            const filteredGroups = getFilteredGroups();
+            
+            if (filteredGroups.length === 0) {
+                const message = currentFilter 
+                    ? 'No groups match the current filter'
+                    : 'No groups added yet';
+                const subMessage = currentFilter 
+                    ? 'Try adjusting your filter criteria'
+                    : 'Start by adding your first WhatsApp group above or import from CSV';
+                    
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="empty-state">
+                            <div>
+                                <h3>${message}</h3>
+                                <p>${subMessage}</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = filteredGroups.map(group => `
+                <tr>
+                    <td><strong>${group.name}</strong></td>
+                    <td><span class="department-badge dept-${group.department.toLowerCase().replace(/[^a-z0-9]/g, '-')}">${group.department}</span></td>
+                    <td>${group.purpose}</td>
+                    <td>${group.admin}</td>
+                    <td><button class="btn btn-danger" onclick="deleteGroup(${group.id})">Delete</button></td>
+                </tr>
+            `).join('');
+        }
+        
+        function filterGroups() {
+            renderGroups();
+            updateSummary();
+        }
+        
+        function updateSummary() {
+            const filteredGroups = getFilteredGroups();
+            const totalGroups = filteredGroups.length;
+            
+            // Get unique departments from all groups (not filtered)
+            const uniqueDepartments = [...new Set(groups.map(g => g.department.toLowerCase()))];
+            const totalDepartments = uniqueDepartments.length;
+            
+            document.getElementById('totalGroups').textContent = totalGroups;
+            document.getElementById('totalDepartments').textContent = totalDepartments;
+        }
+        
+        function exportData() {
+            if (groups.length === 0) {
+                showNotification('No data to export', 'error');
+                return;
+            }
+            
+            const csv = [
+                ['Group Name', 'Department', 'Purpose', 'Admin'],
+                ...groups.map(g => [g.name, g.department, g.purpose, g.admin])
+            ].map(row => row.map(field => `"${field}"`).join(',')).join('\n');
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `whatsapp_groups_${new Date().
